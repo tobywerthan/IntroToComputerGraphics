@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--
+Lab 2 - COMP3801 Spring 2021
+  Basic WebGL2 shaders, mouse events and coordinates
+-->
+<html>
+    <head>
+        <title>Lab 2 - Basic WebGL</title>
+        <link rel="icon" type="image/png" href="COMP3801_RGB_cube.png" >
+        <link  rel="stylesheet" href="index.css" >
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="Common/webgl-utils-2.js" type="text/javascript"></script>
+        <script src="Common/initShaders2.js" type="text/javascript"></script>
+        <script src="Common/MV.js" type="text/javascript"></script>
+        <script src="Lab2.js" type="text/javascript"></script>
+    </head>
+    <body onload="new Lab2('lab2-canvas')">
+        <div class="container">
+            <div>
+                <div style="font-family: Roboto; text-align: center; margin-top: 0%; font-size: 100px; color: #F4EEE0;">
+                    Lab 2
+                </div>
+                <div class="toolMenuContainer">
+                    <div>
+                        <div style="font-family: Roboto; margin-top: 5%; margin-left: 5%; font-size: 50px; color: #F4EEE0;">
+                            Tools
+                        </div>
+                        <div class="tools">
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-points" name="rad" checked>
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Point</span>
+                            </label>
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-lines" name="rad">
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Line</span>
+                            </label>             
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-line-strips" name="rad">
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Line Strip</span>
+                            </label>            
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-line-loops" name="rad">
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Line Loop</span>
+                            </label>             
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-triangles" name="rad">
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Triangle</span>
+                            </label>
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-triangle-strips" name="rad">
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Triangle Strip</span>
+                            </label>
+                            <label class="rad-label">
+                                <input type="radio" class="rad-input" id="lab2-canvas-triangle-fan" name="rad">
+                                <span class="rad-design"></span>
+                                <span class="rad-text">Triangle Fan</span>
+                            </label>
+                        </div>
+                        <div class="resetContainer">
+                            <button id="lab2-canvas-reset-button">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvasContainer">
+                <canvas class="canvas" id="lab2-canvas" width="700" height="525" oncontextmenu="return false">
+                    This browser doesn't support the HTML5 canvas element
+                </canvas>            
+                <div class="coordinateContainer">
+                    <div class="htmlCoordinateContainer">
+                            <div style="display: flex; ">
+                                <p>HTML Coordinates:</p>
+                            </div>
+                            <div style="display: flex; margin-top: 4%">
+                              <p>Mouse x:</p> <span id="lab2-canvas-mousex" style="margin-left: 7%">?</span>  
+                            </div>
+                            <div style="display: flex; margin-top: 4%">
+                              <p>Mouse y:</p> <span id="lab2-canvas-mousey" style="margin-left: 7%">?</span> 
+                            </div>
+                    </div>
+                    <div class="clippedCoordinateContainer">
+                        <div style="display: flex;">
+                          <p>Clipped Coordinates:</p>
+                        </div>
+                        <div style="display: flex; margin-top: 4%">
+                          <p>Mouse x:</p> <span id="lab2-canvas-mousex-clipped" style="margin-left: 7%">?</span> 
+                        </div>
+                        <div style="display: flex; margin-top: 4% ">
+                          <p>Mouse y:</p> <span id="lab2-canvas-mousey-clipped" style="margin-left: 7%">?</span> 
+                        </div>
+                    </div>                    
+                    <div class="mouseInfoContainer">
+                        <div style="position: absolute">
+                           <p>Mouse Down:</p> <span id="lab2-canvas-mousedown" style="margin-left: 0%">?</span> 
+                        </div>
+                        <div style="position: relative; margin-top: 40px;">
+                           <p>Mouse Up:</p> <span id="lab2-canvas-mouseup" style="margin-left: 0%">?</span> 
+                        </div>
+                    </div>  
+                </div>
+                <div style="width: 100%; display: flex; justify-content: center">
+
+                </div>
+                <div class="tableContainer">
+                    <div class="table">
+                        <table class="sliderTable">
+                            <tr class="sliderRow" id="lab2-canvas-r-slider-row">
+                                <td class="sliderTitle">R</td>
+                                <td><input class="sliderInput" id="lab2-canvas-r-slider" type="range" 
+                                           min="0.0" max="1.0" value="0.5" step="0.01" /></td>
+                                <td id="lab2-canvas-r-value" >0.5</td>
+                            </tr>
+                            <tr class="sliderRow" id="lab2-canvas-g-slider-row" >
+                                <td class="sliderTitle">G</td>
+                                <td><input class="sliderInput" id="lab2-canvas-g-slider" type="range" 
+                                           min="0.0" max="1.0" value="0.5" step="0.01"  /></td>
+                                <td id="lab2-canvas-g-value" >0.5</td>
+                            </tr>
+                            <tr class="sliderRow" id="lab2-canvas-b-slider-row" >
+                                <td class="sliderTitle">B</td>
+                                <td><input class="sliderInput" id="lab2-canvas-b-slider" type="range" 
+                                           min="0.0" max="1.0" value="0.5" step="0.01"  /></td>
+                                <td id="lab2-canvas-b-value" >0.5</td>
+                            </tr>
+                        </table>           
+                    </div>
+                    <div class="colorDisplay" id="lab2-canvas-color-display" ></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
